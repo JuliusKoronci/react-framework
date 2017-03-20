@@ -1,8 +1,18 @@
 import React from 'react'
-import { Route } from 'react-router'
-import App from './components/App'
+import { Route, IndexRoute } from 'react-router';
+import Layout from './pages/Layout';
+import SecuredLayout from './pages/SecuredLayout';
+import HomePage from './pages/public/HomePage';
+import ContextProvider from './framework/ContextProvider';
+import Firewall from './modules/Security/Firewall';
 
 export default (
-	<Route path="/" component={App}>
+	<Route component={ContextProvider}>
+		<Route path="/" component={Layout}>
+			<IndexRoute component={HomePage} />
+			<Route path="/app" component={Firewall}>
+				<IndexRoute component={HomePage} />
+			</Route>
+		</Route>
 	</Route>
 );
