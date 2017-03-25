@@ -4,6 +4,8 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import LoginForm from '../components/LoginForm';
 import { login } from '../actions/LoginActions';
+import { browserHistory } from 'react-router';
+import toastr from 'toastr';
 
 class Login extends Component {
 	static defaultProps = {};
@@ -25,7 +27,16 @@ class Login extends Component {
 
 	_onSubmit = (e: InputEvent) => {
 		e.preventDefault();
-		this.props.login(this.state.form.username, this.state.form.password);
+		this.props.login(this.state.form.username, this.state.form.password)
+			.then(() => {
+				if (this.props.auth.token) {
+					browserHistory.push('/app');
+				} else {
+					toastr.error('Login error!');
+				}
+			}).catch((error) => {
+			toastr.error('500');
+		});
 	};
 
 	_onValueReturned = (field, value) => {
@@ -44,7 +55,9 @@ class Login extends Component {
 }
 
 const _mapStoreToProps = (state) => {
-	return { state };
+	return {
+		auth: state.login
+	};
 };
 const _mapDispatchToProps = (dispatch) => {
 	return bindActionCreators({ login }, dispatch);
